@@ -1,0 +1,36 @@
+:root{
+    --padding-var:0.5rem;
+}
+
+#home-main{
+    background-color: #6479e9;
+}
+
+.container-fluid > .row > .col-md-6 > p{
+    color: #ffffff;
+    width: 55%;
+    padding: var(--padding-var);
+    letter-spacing: 2px;
+}
+
+.container-fluid > .row > .col-md-6 > a{
+    text-decoration: none;
+    color: black;
+    padding: var(--padding-var);
+    background-color: #ffffff;
+    border-radius: 10px 10px 10px 10px;
+}
+
+.container-fluid > .row > .col-md-6 > img{
+    width: 40vw;
+    height: 50vh;
+}
+
+.container-fluid > .row > .col-md-3 > button{
+    background-color: #f2fccb;
+    margin-left: 20px;
+}
+
+.container-fluid > .row > .col-md-3 > button:hover{
+    filter: brightness(85%);
+}
