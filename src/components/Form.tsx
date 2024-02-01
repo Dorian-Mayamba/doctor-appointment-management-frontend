@@ -1,62 +1,148 @@
-import React from "react"
-import { RegisterProps } from "../types/types"
-import { useState } from "react";
-import '../styles/register.css';
+import { FormProps, RegisterType,LoginType, ErrorResponse, ResponseDataType } from "../types/types"
+import '../styles/form.css';
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from 'yup';
+import axios from "axios";
+import { useEffect, useState } from "react";
+import $ from 'jquery';
+import { useAppDispatch } from "../app/hooks";
+import { authenticate } from "../features/authenticater/authSlice";
+import { useNavigate } from "react-router";
 
-export default function Form(props: RegisterProps) {
-    const [name, setName] = useState<string>('');
-    const [email, setEmail] = useState<string>('');
-    const [number, setNumber] = useState<Number>(0);
-    const [password, setPassword] = useState<string>('');
-    const [confirmPassword, setPasswordConfirm] = useState<string>('');
+type FormDataType = RegisterType | LoginType;
+const registerSchema: yup.ObjectSchema<FormDataType> = yup
+    .object({
+        name: yup.string().required("please enter a name"),
+        email: yup.string().required("please enter an email").email("please enter a valid email"),
+        number: yup.string().required("please enter your number"),
+        password: yup.string().required("please enter your password"),
+        passwordConfirm: yup.string().required("Please confirm your password").oneOf([yup.ref("password"), ''], "Passwords must match")
+    });
+const loginSchema:yup.ObjectSchema<FormDataType> = yup
+    .object({
+        email:yup.string().required("please enter an email").email("please enter a valid email"),
+        password:yup.string().required("please enter your password")
+    });
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        
+export default function Form(props: FormProps) {
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+    const {
+        register,
+        handleSubmit,
+        setValue,
+        clearErrors,
+        formState: { errors },
+    } = useForm<FormDataType>({
+        resolver: yupResolver(props.isRegister ? registerSchema : loginSchema)
+    });
+    const [error, setError] = useState<ErrorResponse | null>(null);
+    const encodeCredential = (username:string, password:string) =>{
+        return btoa(`${username}:${password}`);
     }
+    const onSubmit = handleSubmit(async (data: FormDataType) => {
+        try {
+            if(props.isRegister){
+                let responseData: any = await axios.post(props.url, data);
+                console.log(responseData);
+            }else{
+                const credentials = encodeCredential(data.email,data.password);
+                let responseData:ResponseDataType = await axios.post(props.url, null, {
+                    headers:{
+                        Authorization:`Basic ${credentials}`
+                    }
+                });
+                dispatch(authenticate({
+                    name:responseData.data.currentUserName,
+                    userId:responseData.data.id,
+                    isAuthenticated:true,
+                    token:responseData.data.accessToken
+                }))
+                navigate('/', {replace:true})
+            }
+        } catch (err: any) {
+            setError(err.response);
+            console.log(error);
+        }
+    }, (err) => console.log(err));
+    useEffect(() => {
+        const fadeOutTime = setTimeout(() => {
+            $('.text-danger').fadeOut('slow', () => {
+                if (error) {
+                    setError(null);
+                } else if (errors) {
+                    clearErrors("name");
+                    clearErrors("email");
+                    clearErrors("number");
+                    clearErrors("password");
+                    clearErrors("passwordConfirm");
+                }
+            });
+        }, 5000)
+
+        return () => {
+            clearTimeout(fadeOutTime);
+        }
+    }, [error, errors.email, errors.name, errors.password, errors.number, errors.passwordConfirm])
 
     return props.isRegister ? (
-        <div className="container-fluid" id="register-content">
-            <form action={props.url} method={props.method} onSubmit={(e) => handleSubmit(e)}>
-                <div className="row">
-                    <div className="col-md-6" id="register-form-content">
+        <div className="container-fluid form-content">
+            <div className="row">
+                <div className="col-md-6">
+                    <form action={props.url} method={props.method} onSubmit={onSubmit}>
+                        {error && <p><strong className="text-danger">{error.data.message}</strong></p>}
                         <h2>Register here</h2>
                         <div className="form-group">
-                            <input type="text" className="form-control" placeholder="enter your name" onChange={(e)=>setName(e.target.value)}/>
+                            <input {...register("name")} type="text" className="form-control" placeholder="enter your name" onChange={(e) => setValue("name" , e.target.value)} />
+                            {errors.name && <p><strong className="text-danger">{errors.name.message}</strong></p>}
                         </div>
                         <div className="form-group">
-                            <input type="email" className="form-control" placeholder="enter your email" onChange={(e)=>setEmail(e.target.value)}/>
+                            <input {...register("email")} type="text" className="form-control" placeholder="enter your email" onChange={(e) => setValue("email", e.target.value)} />
+                            {errors.email && <p><strong className="text-danger">{errors.email.message}</strong></p>}
                         </div>
                         <div className="form-group">
-                            <input type="number" className="form-control" placeholder="enter your number" onChange={(e)=>setNumber(parseInt(e.target.value))}/>
+                            <input {...register("number")} type="tel" className="form-control" placeholder="enter your number" onChange={(e) => setValue("number", e.target.value)} />
+                            {errors.number && <p><strong className="text-danger">{errors.number.message}</strong></p>}
                         </div>
                         <div className="form-group">
-                            <input type="password" className="form-control" placeholder="enter your password" onChange={(e)=>setPassword(e.target.value)}/>
+                            <input {...register("password")} type="password" className="form-control" placeholder="enter your password" onChange={(e) => setValue("password", e.target.value)} />
+                            {errors.password && <p><strong className="text-danger">{errors.password.message}</strong></p>}
                         </div>
                         <div className="form-group">
-                            <input type="password" className="form-control" placeholder="confirm your password" onChange={(e)=>setPasswordConfirm(e.target.value)}/>
+                            <input {...register("passwordConfirm")} type="password" className="form-control" placeholder="confirm your password" onChange={(e) => setValue("passwordConfirm", e.target.value)} />
+                            {errors.passwordConfirm && <p><strong className="text-danger">{errors.passwordConfirm.message}</strong></p>}
                         </div>
                         <div className="form-group">
-                            <input type="button" value="Sign Up" className="form-control btn btn-custom-primary" />
+                            <input type="submit" value="Submit" className="form-control btn btn-custom-primary" />
                         </div>
-                        <div className="form-group">
-                            <h3 className="text-center"><small>Or</small></h3>
-                        </div>
-                        <div className="form-group">
-                            <input type="button" value="Sign Up with google" className="form-control btn btn-dark" />
-                        </div>
-                    </div>
-                    <div className="col-md-6" id="img-background">
-                        
-                    </div>
+                    </form>
                 </div>
-            </form>
+                <div className="col-md-6 img-background"></div>
+            </div>
         </div>
     ) : (
-        <div className="container-fluid">
-            <form action={props.url} method={props.method}>
-                
-            </form>
+        <div className="container-fluid form-content">
+            <div className="row">
+                <div className="col-md-6">
+                    <form action={props.url} method={props.method} onSubmit={onSubmit}>
+                    {error?.data.message && <p><strong className="text-danger">{error.data.message}</strong></p>}
+                    <h1 className="mb-3"> <small>Sign in to your account</small></h1>
+                        <div className="form-group">
+                            <input type="text" {...register('email')} className="form-control" placeholder="enter your email" />
+                            {errors.email && <p><strong className="text-danger">{errors.email.message}</strong></p>}
+                        </div>
+                        <div className="form-group">
+                            <input type="password" {...register('password')} className="form-control" placeholder="enter your password" />
+                            {errors.password && <p><strong className="text-danger">{errors.password.message}</strong></p>}
+                        </div>
+                        <div className="form-group">
+                            <input type="submit" value="Login" className="btn btn-custom-primary form-control" />
+                        </div>
+                    </form>
+                </div>
+                <div className="col-md-6 img-background"></div>
+            </div>
         </div>
     )
 }

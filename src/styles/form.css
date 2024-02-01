@@ -1,0 +1,39 @@
+.form-content{
+    background-color: #6479e9;
+}
+
+.form-content > form > .row{
+    position: relative;
+}
+
+.form-content > .row > .col-md-6 > form{
+    padding: 1.75rem;
+    background-color: #ffffff75;
+    border-radius: 20px;
+    margin: 1.4rem;
+}
+
+.form-content > .row > .col-md-6 > form > .form-group{
+    margin-bottom: 40px;
+}
+
+.form-content > .row > .col-md-6 > form > .form-group > .btn-custom-primary{
+    background-color: #13117a;
+    color: #ffffff;
+}
+
+.form-content > .row > .col-md-6 > form > .form-group > .btn-custom-primary:hover{
+    background-color: #6479e9;
+}
+
+.img-background{
+    background-image: url('../../public/Generic-doctor-v6.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+::placeholder{
+    font-weight: bold;
+    color: #6479e9;
+}
+
