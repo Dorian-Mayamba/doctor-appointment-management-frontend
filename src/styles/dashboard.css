@@ -1,0 +1,47 @@
+:root{
+    --boder-width:2px;
+}
+
+.container-fluid > .row > .col-md-3 > .list-group-flush > .list-group-item{
+    margin-bottom: 1.5rem;
+    color: white;
+    font-weight: bold;
+    transition: color 0.5s;
+}
+
+.container-fluid > .row > .col-md-3 > .list-group-flush > .list-group-item:hover{
+ filter: brightness(75%);
+ color: #06ff7b;
+}
+
+.container-fluid > .row > .col-md-3{
+    background-color: #6479e9;
+    padding: 20px;
+    
+}
+
+.container-fluid > .row > .col-md-8{
+    background-color: #D5FEFE;
+}
+
+.container-fluid > .row > .col-md-8 > #Add-doctor-btn{
+    background-color: #6479e9;
+    color: white;
+    transition: filter 0.3s;
+}
+
+.container-fluid > .row > .col-md-8 > #Add-doctor-btn:hover{
+    filter: brightness(85%);
+}
+
+.container-fluid > .row > .col-md-8 > .table{
+    border: solid var(--boder-width) black;
+}
+
+.container-fluid > .row > .col-md-8 > .table-bordered > * > * > *{
+    border-width: var(--boder-width);
+}
+
+.container-fluid > .row > .col-md-8 > .table > * > * > *{
+    background: none;
+}

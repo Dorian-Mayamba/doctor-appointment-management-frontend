@@ -1,0 +1,22 @@
+#ManageDoctorBox{
+    background: url('../../public/Healthcare-Landscape-Post-Pandemic-BLOG.jpg') no-repeat;
+    background-size: cover;
+    height: 100vh;
+    position: relative;
+}
+
+#ManageDoctorBox > #ManageDoctorForm{
+    background-color: #ffffff5e;
+    width: 55%;
+    position: absolute;
+    top:50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 2.5rem;
+    border-radius: 20px;
+}
+
+#ManageDoctorBox > #ManageDoctorForm > div.form-group{
+    margin-bottom: 30px;
+}
+

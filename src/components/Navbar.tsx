@@ -8,22 +8,25 @@ import { RootState } from '../app/store.js';
 import { useAppDispatch } from '../app/hooks.js';
 import { unAuthenticate } from '../features/authenticater/authSlice.js';
 import { useNavigate } from 'react-router-dom';
+import { ADMIN, DOCTOR, PATIENT } from '../constants/constants.js';
 
 export default function Navbar() {
-    const userId: number = useAppSelector((state: RootState) => state.auth.userId);
-    const userName: string = useAppSelector((state: RootState) => state.auth.name);
-    const isAuthenticated: Boolean = useAppSelector((state: RootState) => state.auth.isAuthenticated);
+    const userId: number = useAppSelector((state: RootState) => state.userId);
+    const userName: string = useAppSelector((state: RootState) => state.name);
+    const isAuthenticated: Boolean = useAppSelector((state: RootState) => state.isAuthenticated);
+    const roleType: string = useAppSelector((state: RootState) => state.roleType);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const handleLogout = (e:React.MouseEvent<HTMLAnchorElement>)=>{
+    const handleLogout = (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
         dispatch(unAuthenticate({
-            token:'',
-            isAuthenticated:false,
-            name:'',
-            userId:0
+            token: '',
+            isAuthenticated: false,
+            name: '',
+            userId: 0,
+            roleType: ''
         }))
-        navigate('/', {replace:true});
+        navigate('/', { replace: true });
     }
     console.log(isAuthenticated);
     const authNavbar = () => {
@@ -39,19 +42,41 @@ export default function Navbar() {
                         Service
                     </Link>
                 </li>
+                <li className="nav-item">
+                    <NavLink to='/Doctors' className="nav-link">
+                        Find a Doctor
+                    </NavLink>
+                </li>
                 <li className="nav-item dropdown">
                     <Link to='#' className='nav-link dropdown-toggle' role='button' id='dropdownMenuLink' data-bs-toggle='dropdown' aria-expanded='false'>
                         {userName}
                     </Link>
                     <ul className="dropdown-menu" aria-labelledby='dropdownMenuLink' id='profileMenu'>
+                        {roleType === ADMIN && <>
+                            <li>
+                                <Link to='/Dashboard' className="dropdown-item">
+                                    Dashboard
+                                </Link>
+                            </li>
+                        </>
+                        }
+                        {roleType === PATIENT && <>
+                            <li>
+                                <Link to='#' className='dropdown-item'>
+                                    My appointment history
+                                </Link>
+                            </li>
+                        </>}
+                        {roleType === DOCTOR && <>
+                            <li>
+                                <Link to='#' className="dropdown-item">
+                                    Manage my appointment
+                                </Link>
+                            </li>
+                        </>}
+                        <li className="dropdown-divider"></li>
                         <li className="dropdown-item">
-                            <Link to='#' className='dropdown-item'>
-                                History
-                            </Link>
-                        </li>
-                        <li className="dropdown-divi"></li>
-                        <li className="dropdown-item">
-                            <Link to='#' className="dropdown-item" onClick={(e)=>handleLogout(e)}>
+                            <Link to='#' className="dropdown-item" onClick={(e) => handleLogout(e)}>
                                 Logout
                             </Link>
                         </li>
@@ -84,6 +109,11 @@ export default function Navbar() {
                         <Link to='/#Services' className='nav-link'>
                             Service
                         </Link>
+                    </li>
+                    <li className="nav-item">
+                        <NavLink to='/Doctors' className="nav-link">
+                            Find a Doctor
+                        </NavLink>
                     </li>
                     <li className="nav-item">
                         <NavLink to='/About-us' className='nav-link'>
@@ -125,7 +155,7 @@ export default function Navbar() {
                     <span className="navbar-toggler-icon"></span>
                 </button>
                 <div className="collapse navbar-collapse" id='collapsibleNavbar'>
-                    {isAuthenticated ? authNavbar(): guestNavbar()}
+                    {isAuthenticated ? authNavbar() : guestNavbar()}
                 </div>
             </div>
         </nav>

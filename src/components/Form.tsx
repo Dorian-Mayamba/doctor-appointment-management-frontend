@@ -1,4 +1,4 @@
-import { FormProps, RegisterType,LoginType, ErrorResponse, ResponseDataType } from "../types/types"
+import { FormProps, RegisterType,LoginType, ErrorResponse, ResponseDataType, successResponse } from "../types/types"
 import '../styles/form.css';
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -38,6 +38,7 @@ export default function Form(props: FormProps) {
         resolver: yupResolver(props.isRegister ? registerSchema : loginSchema)
     });
     const [error, setError] = useState<ErrorResponse | null>(null);
+    const [success,setSuccess] = useState<successResponse | null>(null);
     const encodeCredential = (username:string, password:string) =>{
         return btoa(`${username}:${password}`);
     }
@@ -45,7 +46,7 @@ export default function Form(props: FormProps) {
         try {
             if(props.isRegister){
                 let responseData: any = await axios.post(props.url, data);
-                console.log(responseData);
+                setSuccess(responseData);
             }else{
                 const credentials = encodeCredential(data.email,data.password);
                 let responseData:ResponseDataType = await axios.post(props.url, null, {
@@ -57,7 +58,8 @@ export default function Form(props: FormProps) {
                     name:responseData.data.currentUserName,
                     userId:responseData.data.id,
                     isAuthenticated:true,
-                    token:responseData.data.accessToken
+                    token:responseData.data.accessToken,
+                    roleType:responseData.data.roleType
                 }))
                 navigate('/', {replace:true})
             }
@@ -67,7 +69,7 @@ export default function Form(props: FormProps) {
         }
     }, (err) => console.log(err));
     useEffect(() => {
-        const fadeOutTime = setTimeout(() => {
+        const errorFadeOutTime = setTimeout(() => {
             $('.text-danger').fadeOut('slow', () => {
                 if (error) {
                     setError(null);
@@ -80,11 +82,17 @@ export default function Form(props: FormProps) {
                 }
             });
         }, 5000)
+        const successFadeOutTime = setTimeout(()=>{
+            $('.text-success').fadeOut('slow', function(){
+                if(success) setSuccess(null);
+            })
+        },5000)
 
         return () => {
-            clearTimeout(fadeOutTime);
+            clearTimeout(errorFadeOutTime);
+            clearTimeout(successFadeOutTime);
         }
-    }, [error, errors.email, errors.name, errors.password, errors.number, errors.passwordConfirm])
+    }, [error,success, errors.email, errors.name, errors.password, errors.number, errors.passwordConfirm])
 
     return props.isRegister ? (
         <div className="container-fluid form-content">
@@ -92,6 +100,7 @@ export default function Form(props: FormProps) {
                 <div className="col-md-6">
                     <form action={props.url} method={props.method} onSubmit={onSubmit}>
                         {error && <p><strong className="text-danger">{error.data.message}</strong></p>}
+                        {success && <p><strong className="text-success">{success.data.message}</strong></p>}
                         <h2>Register here</h2>
                         <div className="form-group">
                             <input {...register("name")} type="text" className="form-control" placeholder="enter your name" onChange={(e) => setValue("name" , e.target.value)} />

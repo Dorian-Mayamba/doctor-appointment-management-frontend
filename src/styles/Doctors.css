@@ -1,0 +1,14 @@
+.container-fluid > .row > .col-md-3 > .list-group > .list-group-item{
+    margin-bottom: 1.185rem;
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-weight: bold;
+    padding: 1.2rem;
+    font-size:1.055rem;
+    transition: color 0.3s;
+}
+
+.container-fluid > .row > .col-md-3 > .list-group > .list-group-item:hover{
+    color:#06ff7b
+}

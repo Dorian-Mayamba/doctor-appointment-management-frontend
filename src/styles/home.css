@@ -1,5 +1,6 @@
 :root{
     --padding-var:0.5rem;
+    --button-padding-var:0.65rem
 }
 
 #home-main{
@@ -16,9 +17,15 @@
 .container-fluid > .row > .col-md-6 > a{
     text-decoration: none;
     color: black;
-    padding: var(--padding-var);
+    padding: var(--button-padding-var);
     background-color: #ffffff;
     border-radius: 10px 10px 10px 10px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.container-fluid > .row > .col-md-6 > a:hover{
+    background: #000000;
+    color: #ffffff;
 }
 
 .container-fluid > .row > .col-md-6 > img{
@@ -29,8 +36,9 @@
 .container-fluid > .row > .col-md-3 > button{
     background-color: #f2fccb;
     margin-left: 20px;
+    transition: filter 0.4s;
 }
 
 .container-fluid > .row > .col-md-3 > button:hover{
-    filter: brightness(85%);
+    filter: brightness(65%);
 }

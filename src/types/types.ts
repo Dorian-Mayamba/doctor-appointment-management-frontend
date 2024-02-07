@@ -26,6 +26,15 @@ export type ResponseDataContentType = {
     accessToken:string;
     currentUserName:string;
     id:number;
+    roleType:string;
+}
+
+export type successResponse = {
+    data:SuccessResponseData;
+}
+
+export type SuccessResponseData = {
+    message:string;
 }
 
 export type ErrorResponse = {
