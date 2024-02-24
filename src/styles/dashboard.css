@@ -20,28 +20,31 @@
     
 }
 
-.container-fluid > .row > .col-md-8{
+.container-fluid > .row > .col-md-9{
     background-color: #D5FEFE;
 }
 
-.container-fluid > .row > .col-md-8 > #Add-doctor-btn{
+.container-fluid > .row > .col-md-9 > .table-responsive > #Add-doctor-btn{
     background-color: #6479e9;
     color: white;
     transition: filter 0.3s;
 }
 
-.container-fluid > .row > .col-md-8 > #Add-doctor-btn:hover{
+.container-fluid > .row > .col-md-9 > .table-responsive > #Add-doctor-btn:hover{
     filter: brightness(85%);
 }
 
-.container-fluid > .row > .col-md-8 > .table{
+.container-fluid > .row > .col-md-9 > .table-responsive > .table{
     border: solid var(--boder-width) black;
 }
 
-.container-fluid > .row > .col-md-8 > .table-bordered > * > * > *{
+.container-fluid > .row > .col-md-9 > .table-responsive > .table-bordered > * > * > *{
     border-width: var(--boder-width);
 }
 
-.container-fluid > .row > .col-md-8 > .table > * > * > *{
+.container-fluid > .row > .col-md-9 > .table-responsive > .table > * > * > *{
     background: none;
+}
+.container-fluid > .row > .col-md-9 > .table-responsive > .table > * > * > * > a > img{
+    width: 60px;
 }

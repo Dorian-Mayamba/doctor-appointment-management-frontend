@@ -1,7 +1,15 @@
 import ManageDoctorForm from '../components/ManageDoctorForm';
+import { useParams } from 'react-router';
 
-export default function ManageDoctor(){
+interface ManageDoctorProps{
+    isEdit?:boolean;
+}
+
+export default function ManageDoctor({isEdit}:ManageDoctorProps){
+    const {doctorId} = useParams()
+
     return (
-        <ManageDoctorForm isAdd={true}/>
+        doctorId ? <ManageDoctorForm isEdit={isEdit} doctorId={parseInt(doctorId)}/>
+            : <ManageDoctorForm isAdd={true}/>
     )
 }

@@ -1,0 +1,10 @@
+import DoctorList from "./DoctorListComponent";
+import { useAppSelector } from "../../src/app/hooks";
+export default function DoctorComponent(){
+    const token = useAppSelector(state=>state.token);
+    return (
+        <tbody>
+            <DoctorList token={token}/>
+        </tbody>
+    )
+}

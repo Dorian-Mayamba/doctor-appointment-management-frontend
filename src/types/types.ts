@@ -33,6 +33,21 @@ export type successResponse = {
     data:SuccessResponseData;
 }
 
+export type DoctorsResponse = {
+    data:DoctorData[]
+}
+
+export type DoctorResponse = {
+    data:DoctorData;
+}
+
+export type DoctorData = {
+    doctorName:string;
+    doctorEmail:string;
+    doctorId:number;
+    doctorSpeciality:string;
+}
+
 export type SuccessResponseData = {
     message:string;
 }

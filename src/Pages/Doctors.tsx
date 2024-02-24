@@ -11,7 +11,7 @@ export default function Doctors(){
                         <SpecialityList isList={true} isSelect={false}/>
                     </div>
                 </div>
-                <div className="col-md-8">
+                <div className="col-md-9">
                     <h2 className="text-center p-3"><small>Find a Doctor</small></h2>
                 </div>
             </div>

@@ -1,0 +1,5 @@
+#about-us-banner{
+    background: url('../../public/about-us-picture.png') no-repeat;
+    background-size: 100% 100%;
+    height: 35vh;
+}

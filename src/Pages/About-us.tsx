@@ -1,7 +1,8 @@
+import '../styles/about.css'
 export default function About(){
     return(
-        <div className="container-fluid">
-            <h1>About</h1>
+        <div className="jumbotron" id='about-us-banner'>
+            
         </div>
     )
 }

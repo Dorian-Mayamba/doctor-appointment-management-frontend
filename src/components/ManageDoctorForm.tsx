@@ -8,7 +8,7 @@ import axios from "axios";
 import $ from 'jquery';
 import { useAppSelector } from "../../src/app/hooks";
 import SpecialityList from "./SpecialityList";
-import { successResponse } from "../../src/types/types";
+import { successResponse, DoctorData } from "../../src/types/types";
 interface DoctorFormStates {
     isEdit?: Boolean;
     isAdd?: Boolean;
@@ -29,13 +29,14 @@ const doctorSchema: yup.ObjectSchema<DoctorSchemaProps> = yup
     });
 
 export default function ManageDoctorForm({ isEdit, isAdd, doctorId }: DoctorFormStates) {
-
-    const [doctorName, setDoctorName] = useState<string>('');
-    const [doctorEmail, setDoctorEmail] = useState<string>('');
-    const [doctorSpeciality, setDoctorSpeciality] = useState<string>('');
     const [success, setSuccess] = useState<successResponse | null>(null);
     const token = useAppSelector((state) => state.token);
-
+    const [doctor, setDoctor] = useState<DoctorData>({
+        doctorEmail: '',
+        doctorName: '',
+        doctorSpeciality: '',
+        doctorId: 0
+    });
     const {
         register,
         setValue,
@@ -43,12 +44,24 @@ export default function ManageDoctorForm({ isEdit, isAdd, doctorId }: DoctorForm
         clearErrors,
         formState: { errors },
     } = useForm<DoctorSchemaProps>({
-        resolver: yupResolver(doctorSchema)
+        resolver: yupResolver(doctorSchema),
+        defaultValues:async ()=>{
+            if(doctorId){
+                let data = await axios.get(`/api/doctor/${doctorId}`);
+                return data.data;
+            }
+        }
     });
 
     useEffect(() => {
-        if (doctorId) {
-            //ToDo implement single doctor request
+        if (isEdit && doctorId) {
+            axios.get(`/api/doctor/${doctorId}`)
+                .then((data) => {
+                    setDoctor(data.data);
+                })
+                .catch((err) => {
+                    console.log(err);
+                })
         }
         var errorTimer = setTimeout(() => {
             $('.text-danger').fadeOut('slow', () => {
@@ -61,9 +74,9 @@ export default function ManageDoctorForm({ isEdit, isAdd, doctorId }: DoctorForm
             })
         }, 5000);
 
-        var successTimer = setTimeout(()=>{
-            $('.text-success').fadeOut('slow', ()=>{
-                if(success){
+        var successTimer = setTimeout(() => {
+            $('.text-success').fadeOut('slow', () => {
+                if (success) {
                     console.log('clearing the success object');
                     setSuccess(null);
                 }
@@ -74,7 +87,7 @@ export default function ManageDoctorForm({ isEdit, isAdd, doctorId }: DoctorForm
             clearTimeout(errorTimer);
             clearTimeout(successTimer);
         }
-    }, [errors.doctorEmail, errors.doctorName, errors.doctorSpeciality,success])
+    }, [errors.doctorEmail, errors.doctorName, errors.doctorSpeciality, success])
 
     const onSubmit = handleSubmit(async (data) => {
         console.log("submitted");
@@ -90,8 +103,19 @@ export default function ManageDoctorForm({ isEdit, isAdd, doctorId }: DoctorForm
             } catch (err) {
                 console.log(err);
             }
-        } else if (isEdit) {
+        } else if (isEdit && doctorId) {
             //ToDo implement edit doctor feature
+            try {
+                let updateDoctorResponse = await axios.patch(`/api/auth/admin/doctor/edit/${doctorId}`, data, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                setSuccess(updateDoctorResponse);
+                console.log(success);
+            } catch (err) {
+                console.log(err);
+            }
         }
     }, (err) => {
         console.log(err);
@@ -115,7 +139,7 @@ export default function ManageDoctorForm({ isEdit, isAdd, doctorId }: DoctorForm
                         <div className="form-group">
                             <select {...register("doctorSpeciality")} className="form-control form-select" placeholder="Doctor Speciality" onChange={(e) => setValue("doctorSpeciality", e.target.value)}>
                                 <option value="">Doctor Speciality</option>
-                                <SpecialityList isSelect={true} isList={false}/>
+                                <SpecialityList isSelect={true} isList={false} />
                             </select>
                             {errors.doctorSpeciality && <p><strong className="text-danger">{errors.doctorSpeciality.message}</strong></p>}
                         </div>
@@ -131,16 +155,18 @@ export default function ManageDoctorForm({ isEdit, isAdd, doctorId }: DoctorForm
                     <>
                         <h2><small>Edit a Doctor</small></h2>
                         <div className="form-group">
-                            <input className="form-control" type="text" placeholder="Doctor Name" value={doctorName} />
+                            <input {...register("doctorName")} className="form-control" type="text" placeholder="Doctor Name" onChange={(e) => setValue("doctorName", e.target.value)} />
+                            {errors.doctorName && <p><strong className="text-danger">{errors.doctorName.message}</strong></p>}
                         </div>
                         <div className="form-group">
-                            <input type="email" className="form-control" placeholder="Doctor email" value={doctorEmail} />
+                            <input {...register("doctorEmail")} type="email" className="form-control" placeholder="Doctor email" onChange={(e) => setValue("doctorEmail", e.target.value)} />
+                            {errors.doctorEmail && <p><strong className="text-danger">{errors.doctorEmail.message}</strong></p>}
                         </div>
                         <div className="form-group">
-                            <select className="form-control form-select" placeholder="Doctor Speciality">
-                                <option value="" disabled selected>Doctor Speciality</option>
-                                <option value={doctorSpeciality}>{doctorSpeciality}</option>
+                            <select {...register("doctorSpeciality")} className="form-control form-select" placeholder="Doctor Speciality" onChange={(e) => setValue("doctorSpeciality", e.target.value)}>
+                                <SpecialityList isSelect={true} isList={false} speciality={doctor.doctorSpeciality}/>
                             </select>
+                            {errors.doctorSpeciality && <p><strong className="text-danger">{errors.doctorSpeciality.message}</strong></p>}
                         </div>
                         <div className="form-group">
                             <input type="submit" value="Save changes" className="form-control btn btn-lg btn-warning" />

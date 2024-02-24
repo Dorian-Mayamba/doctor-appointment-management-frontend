@@ -28,7 +28,6 @@ export default function Navbar() {
         }))
         navigate('/', { replace: true });
     }
-    console.log(isAuthenticated);
     const authNavbar = () => {
         return (
             <ul className="navbar-nav me-auto">

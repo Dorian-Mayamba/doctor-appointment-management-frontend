@@ -21,6 +21,7 @@ function App() {
         <Route path='/Doctors' element={<Doctors/>}/>
         <Route path='/Dashboard' element={<Dashboard/>}/>
         <Route path='/Create-Doctor' element={<ManageDoctor/>}/>
+        <Route path='doctor/edit/:doctorId' element={<ManageDoctor isEdit={true}/>}/>
         <Route path='/About-us' element={<About/>}/>
         <Route path='/Contact' element={<Contact/>}/>
       </Routes>

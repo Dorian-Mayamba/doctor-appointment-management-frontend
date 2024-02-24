@@ -2,7 +2,7 @@ import '../styles/dashboard.css';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import DashBoardImage from '../../public/Hospital 3.png';
-import axios from 'axios';
+import DoctorComponent from '../../src/components/DoctorComponents';
 
 interface DashboardSectionState {
     page: "Pending Appointment" | "Completed Appointments" | "Canceled Appointments" | "Manage Doctors" | "Montlhy Banking Statement"
@@ -53,22 +53,26 @@ export default function Dashboard() {
                         <img className='img-fluid' src={DashBoardImage} alt="dashobardImage" />
                     </div>
                 </div>
-                <div className="col-md-8">
+                <div className="col-md-9">
                     <h2 className='text-center'><small>Dashboard</small></h2>
                     {page.page === "Manage Doctors" &&
-                        <>
+                        <div className='table-responsive'>
                             <Link to='/Create-Doctor' className='btn btn-lg mb-4' id='Add-doctor-btn'>Add a doctor</Link>
                             <table className='table table-bordered'>
                                 <thead>
                                     <tr>
-                                        <th>Doctor Name</th>
-                                        <th>Doctor Info</th>
-                                        <th>Edit Doctor</th>
-                                        <th>Delete Doctor</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Speciality</th>
+                                        <th>Profile</th>
+                                        <th>Edit</th>
+                                        <th>Delete</th>
                                     </tr>
                                 </thead>
+                                <DoctorComponent />
                             </table>
-                        </>
+
+                        </div>
                     }
                 </div>
             </div>
