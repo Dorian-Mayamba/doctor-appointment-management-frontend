@@ -4,7 +4,7 @@ export default function DoctorComponent(){
     const token = useAppSelector(state=>state.token);
     return (
         <tbody>
-            <DoctorList token={token}/>
+            <DoctorList token={token} isTable={true}/>
         </tbody>
     )
 }

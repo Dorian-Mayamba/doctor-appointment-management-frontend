@@ -6,7 +6,7 @@ interface ManageDoctorProps{
 }
 
 export default function ManageDoctor({isEdit}:ManageDoctorProps){
-    const {doctorId} = useParams()
+    const {doctorId} = useParams();
 
     return (
         doctorId ? <ManageDoctorForm isEdit={isEdit} doctorId={parseInt(doctorId)}/>

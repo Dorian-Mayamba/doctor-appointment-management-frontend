@@ -12,3 +12,26 @@
 .container-fluid > .row > .col-md-3 > .list-group > .list-group-item:hover{
     color:#06ff7b
 }
+
+.container-fluid > .row > .col-md-9 > .row > .col-md-4 > .content{
+    text-align: center;
+    background-color: #6479e9;
+    padding: 20px;
+    border-radius: 2.2rem;
+    margin: 0.25rem;
+}
+
+.container-fluid > .row > .col-md-9 > .row > .col-md-4 > .content > button{
+    width: 100%;
+}
+
+.container-fluid > .row > .col-md-9 > .row > .col-md-4 > .content > .btn-orange{
+    background-color: #ea8f4d;
+    color: #ffffff;
+    margin-bottom: 1.2rem;
+    transition: filter 0.3s;
+}
+
+.container-fluid > .row > .col-md-9 > .row > .col-md-4 > .content > .btn-orange:hover{
+    filter: brightness(85%);
+}

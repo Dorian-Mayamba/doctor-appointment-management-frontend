@@ -8,6 +8,7 @@ import Contact from './Pages/Contact';
 import Doctors from './Pages/Doctors';
 import Dashboard from './Pages/Dashboard';
 import ManageDoctor from './Pages/ManageDoctor';
+import AppointmentBooking from './Pages/AppointmentBooking';
 
 function App() {
 
@@ -22,6 +23,7 @@ function App() {
         <Route path='/Dashboard' element={<Dashboard/>}/>
         <Route path='/Create-Doctor' element={<ManageDoctor/>}/>
         <Route path='doctor/edit/:doctorId' element={<ManageDoctor isEdit={true}/>}/>
+        <Route path='appointments/:doctorId/:patientId' element={<AppointmentBooking/>} />
         <Route path='/About-us' element={<About/>}/>
         <Route path='/Contact' element={<Contact/>}/>
       </Routes>

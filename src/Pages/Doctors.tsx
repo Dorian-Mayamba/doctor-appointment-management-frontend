@@ -1,6 +1,7 @@
-import SpecialityList from "../../src/components/SpecialityList"
-import { Link } from "react-router-dom"
-import '../styles/Doctors.css'
+import SpecialityList from "../../src/components/SpecialityList";
+import { Link } from "react-router-dom";
+import '../styles/Doctors.css';
+import DoctorList from "../../src/components/DoctorListComponent";
 export default function Doctors(){
     return (
         <div className="container-fluid">
@@ -13,6 +14,9 @@ export default function Doctors(){
                 </div>
                 <div className="col-md-9">
                     <h2 className="text-center p-3"><small>Find a Doctor</small></h2>
+                    <div className="row">
+                        <DoctorList isGrid={true}/>
+                    </div>
                 </div>
             </div>
         </div>

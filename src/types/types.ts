@@ -42,10 +42,10 @@ export type DoctorResponse = {
 }
 
 export type DoctorData = {
-    doctorName:string;
-    doctorEmail:string;
-    doctorId:number;
-    doctorSpeciality:string;
+    doctorName?:string;
+    doctorEmail?:string;
+    doctorId?:number;
+    doctorSpeciality?:string;
 }
 
 export type SuccessResponseData = {

@@ -10,6 +10,18 @@
     width: 50px;
 }
 
-.active{
-    background-color: #90d626b2;
+.navbar-nav > .nav-item{
+    margin: 0 4.5px;
+}
+
+.navbar-nav .nav-link.active{
+    background-color: #3599F8;
+    border-radius: 5px;
+    color: white;
+}
+
+.navbar-nav .nav-link:hover{
+    background-color: #3599F8;
+    border-radius: 5px;
+    color: white;
 }
