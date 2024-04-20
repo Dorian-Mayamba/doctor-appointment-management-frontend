@@ -1,0 +1,23 @@
+.appointment-title-container{
+    display: grid;
+    grid-template-columns: 0.5fr 0.5fr 0.5fr;
+    place-items:center;
+}
+
+.appointment-title-container > h2{
+    justify-self: end;
+}
+
+.ReactModal__Overlay {
+    opacity: 0;
+    transition: opacity 400ms ease-in-out;
+}
+
+.ReactModal__Overlay--after-open{
+    opacity: 1;
+    z-index: 20;
+}
+
+.ReactModal__Overlay--before-close{
+    opacity: 0;
+}

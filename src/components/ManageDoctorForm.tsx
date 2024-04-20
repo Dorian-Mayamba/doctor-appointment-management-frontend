@@ -19,13 +19,15 @@ interface DoctorSchemaProps {
     doctorName: string;
     doctorEmail: string;
     doctorSpeciality: string;
+    doctorNumber:string;
 }
 
 const doctorSchema: yup.ObjectSchema<DoctorSchemaProps> = yup
     .object({
         doctorName: yup.string().required("Please enter a doctor name"),
         doctorEmail: yup.string().required("Please enter a doctor email").email("Please input a valid email").matches(/^[a-z].+@doctor.ac.uk$/i, { message: "Please enter a valid doctor email", excludeEmptyString: true, name: "Match doctor email" }),
-        doctorSpeciality: yup.string().required("Please choose a doctor speciality")
+        doctorSpeciality: yup.string().required("Please choose a doctor speciality"),
+        doctorNumber:yup.string().required("please enter your number"),
     });
 
 export default function ManageDoctorForm({ isEdit, isAdd, doctorId }: DoctorFormStates) {
@@ -35,7 +37,11 @@ export default function ManageDoctorForm({ isEdit, isAdd, doctorId }: DoctorForm
         doctorEmail: '',
         doctorName: '',
         doctorSpeciality: '',
-        doctorId: 0
+        doctorId: 0,
+        appointments:[],
+        averageRating:0,
+        ratings:[],
+        reviews:[],
     });
     const {
         register,
@@ -54,15 +60,6 @@ export default function ManageDoctorForm({ isEdit, isAdd, doctorId }: DoctorForm
     });
 
     useEffect(() => {
-        if (isEdit && doctorId) {
-            axios.get(`/api/doctor/${doctorId}`)
-                .then((data) => {
-                    setDoctor(data.data);
-                })
-                .catch((err) => {
-                    console.log(err);
-                })
-        }
         var errorTimer = setTimeout(() => {
             $('.text-danger').fadeOut('slow', () => {
                 if (errors.doctorEmail) {
@@ -70,6 +67,7 @@ export default function ManageDoctorForm({ isEdit, isAdd, doctorId }: DoctorForm
                     clearErrors("doctorName");
                     clearErrors("doctorEmail");
                     clearErrors("doctorSpeciality");
+                    clearErrors("doctorNumber");
                 }
             })
         }, 5000);
@@ -87,7 +85,7 @@ export default function ManageDoctorForm({ isEdit, isAdd, doctorId }: DoctorForm
             clearTimeout(errorTimer);
             clearTimeout(successTimer);
         }
-    }, [errors.doctorEmail, errors.doctorName, errors.doctorSpeciality, success])
+    }, [errors.doctorEmail, errors.doctorName, errors.doctorSpeciality,errors.doctorNumber, success])
 
     const onSubmit = handleSubmit(async (data) => {
         console.log("submitted");
@@ -144,6 +142,10 @@ export default function ManageDoctorForm({ isEdit, isAdd, doctorId }: DoctorForm
                             {errors.doctorSpeciality && <p><strong className="text-danger">{errors.doctorSpeciality.message}</strong></p>}
                         </div>
                         <div className="form-group">
+                            <input {...register("doctorNumber")} type="text" className="form-control" placeholder="doctor number"/>
+                            {errors.doctorNumber && <p><strong className="text-danger">{errors.doctorNumber.message}</strong></p>}
+                        </div>
+                        <div className="form-group">
                             <input type="submit" value="Save Doctor" className="form-control btn btn-lg btn-success" />
                         </div>
                         <div className="form-group">
@@ -167,6 +169,10 @@ export default function ManageDoctorForm({ isEdit, isAdd, doctorId }: DoctorForm
                                 <SpecialityList isSelect={true} isList={false} speciality={doctor.doctorSpeciality}/>
                             </select>
                             {errors.doctorSpeciality && <p><strong className="text-danger">{errors.doctorSpeciality.message}</strong></p>}
+                        </div>
+                        <div className="form-group">
+                            <input {...register("doctorNumber")} type="text" className="form-control" placeholder="doctor number"/>
+                            {errors.doctorNumber && <p><strong className="text-danger">{errors.doctorNumber.message}</strong></p>}
                         </div>
                         <div className="form-group">
                             <input type="submit" value="Save changes" className="form-control btn btn-lg btn-warning" />

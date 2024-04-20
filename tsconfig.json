@@ -9,6 +9,7 @@
     "paths": {
       "*": ["types/*"]
     },
+    "typeRoots": ["./node_modules/types", "./src/types"],
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -24,6 +25,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"],
+  "include": ["src", "index.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

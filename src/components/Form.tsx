@@ -9,6 +9,7 @@ import $ from 'jquery';
 import { useAppDispatch } from "../app/hooks";
 import { authenticate } from "../features/authenticater/authSlice";
 import { useNavigate } from "react-router";
+import Button from '@mui/material/Button';
 
 type FormDataType = RegisterType | LoginType;
 const registerSchema: yup.ObjectSchema<FormDataType> = yup
@@ -59,6 +60,7 @@ export default function Form(props: FormProps) {
                     userId:responseData.data.id,
                     isAuthenticated:true,
                     token:responseData.data.accessToken,
+                    email:responseData.data.email,
                     roleType:responseData.data.roleType
                 }))
                 navigate('/', {replace:true})

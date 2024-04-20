@@ -22,9 +22,6 @@ export default function Dashboard() {
     const [page, setPage] = useState<DashboardSectionState>({
         page: "Manage Doctors"
     });
-    const [doctors, setDoctor] = useState<DoctorResponseArray>({
-        data: []
-    });
 
     useEffect(() => {
 

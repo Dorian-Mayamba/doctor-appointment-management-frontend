@@ -24,6 +24,7 @@ export default function Navbar() {
             isAuthenticated: false,
             name: '',
             userId: 0,
+            email:'',
             roleType: ''
         }))
         navigate('/', { replace: true });
@@ -42,9 +43,11 @@ export default function Navbar() {
                     </Link>
                 </li>
                 <li className="nav-item">
-                    <NavLink to='/Doctors' className="nav-link">
-                        Find a Doctor
-                    </NavLink>
+                    {roleType == PATIENT && <>
+                        <NavLink to='/Doctors' className="nav-link">
+                            Find a Doctor
+                        </NavLink>
+                    </>}
                 </li>
                 <li className="nav-item dropdown">
                     <Link to='#' className='nav-link dropdown-toggle' role='button' id='dropdownMenuLink' data-bs-toggle='dropdown' aria-expanded='false'>
@@ -65,12 +68,21 @@ export default function Navbar() {
                                     My appointment history
                                 </Link>
                             </li>
+                            <li className="dropdown-divider">
+                            </li>
+                            <li>
+                                <Link className='dropdown-item' to={`/profile/${userId}`}>Profile</Link>
+                            </li>
                         </>}
                         {roleType === DOCTOR && <>
                             <li>
                                 <Link to='#' className="dropdown-item">
                                     Manage my appointment
                                 </Link>
+                            </li>
+                            <li className="dropdown-divider"></li>
+                            <li>
+                                <Link className='dropdown-item' to={`/profile/${userId}`}>Profile</Link>
                             </li>
                         </>}
                         <li className="dropdown-divider"></li>

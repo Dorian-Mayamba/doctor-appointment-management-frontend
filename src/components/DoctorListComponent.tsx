@@ -10,6 +10,7 @@ import $ from 'jquery';
 import '../styles/dialog.css';
 import { RootState } from "../../src/app/store";
 import { connect } from "react-redux";
+import DoctorCard from "./DoctorCardComponent";
 
 interface DoctorListProps {
     token?: string;
@@ -17,9 +18,9 @@ interface DoctorListProps {
     isTable?: Boolean;
 }
 
-interface UserDetailsProps{
-    isAuthenticated?:Boolean;
-    userId?:number;
+interface UserDetailsProps {
+    isAuthenticated?: Boolean;
+    userId?: number;
 }
 
 class DoctorList extends React.Component<DoctorListProps & UserDetailsProps> {
@@ -127,23 +128,35 @@ class DoctorList extends React.Component<DoctorListProps & UserDetailsProps> {
     }
 
     renderDoctorColumns = () => {
+        console.log(this.state.data);
         let doctorElements = this.state.data.map(({
             doctorName,
             doctorId,
-            doctorSpeciality
+            doctorSpeciality,
+            doctorProfile
         }: DoctorData, index: number) => {
             return (
-                <div key={index} className="col-md-4 my-4">
-                    <div className="content">
-                        <h2 className="text-light"><small>{doctorName}</small></h2>
-                        <h2 className="text-light"><small>{doctorSpeciality}</small></h2>
-                        <button className="btn btn-lg btn-orange">Have a chat</button>
-                        <Link to={`/appointments/${doctorId}/${this.props.userId}`} className="btn btn-lg btn-success">Book An Appointment</Link>
-                    </div>
-                </div>
+                <DoctorCard
+                    doctorId={doctorId}
+                    doctorName={doctorName}
+                    doctorSpeciality={doctorSpeciality}
+                    profilePath={doctorProfile}
+                    key={index}
+                    isGrid={true}
+                />
             )
         })
         return doctorElements;
+    }
+
+    modalElement = () => {
+        return (
+            <div className="container text-center">
+                <h2><small>{this.contentLabel}</small></h2>
+                <button onClick={(e => this.handleDoctorDelete(this.url, e))} type="button" className="btn btn-lg btn-danger">Confirm</button>
+                <button onClick={this.closeModal} type="button" className="btn btn-lg btn-light">Cancel</button>
+            </div>
+        )
     }
 
     render(): React.ReactNode {
@@ -163,10 +176,9 @@ class DoctorList extends React.Component<DoctorListProps & UserDetailsProps> {
                             onRequestClose={this.closeModal}
                             style={this.customStyles}
                             contentLabel={this.contentLabel}
+                            contentElement={this.modalElement}
                         >
-                            <h2><small>{this.contentLabel}</small></h2>
-                            <button onClick={(e => this.handleDoctorDelete(this.url, e))} type="button" className="btn btn-lg btn-danger">Confirm</button>
-                            <button onClick={this.closeModal} type="button" className="btn btn-lg btn-light">Cancel</button>
+
                         </Modal>
                         {this.renderDoctorTable()}
                     </>
@@ -178,10 +190,10 @@ class DoctorList extends React.Component<DoctorListProps & UserDetailsProps> {
     }
 }
 
-const mapStateToProps = (state:RootState)=>{
+const mapStateToProps = (state: RootState) => {
     return {
-        userId:state.userId,
-        isAuthenticated:state.isAuthenticated
+        userId: state.userId,
+        isAuthenticated: state.isAuthenticated
     }
 };
 

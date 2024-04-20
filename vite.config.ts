@@ -10,10 +10,17 @@ export default defineConfig({
       '/api':{
         target: 'http://localhost:8080',
         rewrite:(path)=>path.replace(/^\/api/,'')
+      },
+      '/chat':{
+        target: 'ws://localhost:8081/ws',
+        ws:true
       }
-    }
+    },
+    port:parseInt(process.env.VITE_SERVER_PORT) || 3000,
   },
+  
   define:{
-    'process.env':process.env
+    'process.env':process.env,
+    global:{}
   }
 })

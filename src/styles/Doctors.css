@@ -1,37 +1,34 @@
-.container-fluid > .row > .col-md-3 > .list-group > .list-group-item{
-    margin-bottom: 1.185rem;
+/* Adjusting list group item styles to be responsive */
+.list-group-item {
+    margin-bottom: 1vh; /* 1% of the viewport's height */
     background: none;
     border: none;
     color: #ffffff;
     font-weight: bold;
     padding: 1.2rem;
-    font-size:1.055rem;
+    font-size: 0.75rem;
     transition: color 0.3s;
 }
 
-.container-fluid > .row > .col-md-3 > .list-group > .list-group-item:hover{
-    color:#06ff7b
+.list-group-item:hover {
+    color: #06ff7b;
 }
 
-.container-fluid > .row > .col-md-9 > .row > .col-md-4 > .content{
-    text-align: center;
-    background-color: #6479e9;
-    padding: 20px;
-    border-radius: 2.2rem;
-    margin: 0.25rem;
+/* Responsive font size and padding for smaller devices */
+@media (max-width: 768px) {
+    .list-group-item {
+        font-size: 3.5vw; /* Adjust font size based on viewport width */
+        padding: 3vw; /* Padding that scales with viewport width */
+    }
 }
 
-.container-fluid > .row > .col-md-9 > .row > .col-md-4 > .content > button{
-    width: 100%;
-}
-
-.container-fluid > .row > .col-md-9 > .row > .col-md-4 > .content > .btn-orange{
-    background-color: #ea8f4d;
-    color: #ffffff;
-    margin-bottom: 1.2rem;
-    transition: filter 0.3s;
-}
-
-.container-fluid > .row > .col-md-9 > .row > .col-md-4 > .content > .btn-orange:hover{
-    filter: brightness(85%);
+/* Ensuring the content is within the viewport for extra small devices */
+@media (max-width: 576px) {
+    .container-fluid > .row > .col-md-2 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    .list-group-item {
+        margin-bottom: 2vh; /* Increased margin for smaller screens */
+    }
 }
