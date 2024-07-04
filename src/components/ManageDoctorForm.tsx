@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import '../styles/ManageDoctor.css';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
@@ -9,6 +9,12 @@ import $ from 'jquery';
 import { useAppSelector } from "../../src/app/hooks";
 import SpecialityList from "./SpecialityList";
 import { successResponse, DoctorData } from "../../src/types/types";
+import Alert from '@mui/material/Alert';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
+import Collapse from '@mui/material/Collapse';
+import { IconButton } from '@mui/material';
+import MessageContext, { messageContext } from "../../src/contexts/FlashMessageContex";
 interface DoctorFormStates {
     isEdit?: Boolean;
     isAdd?: Boolean;
@@ -25,14 +31,14 @@ interface DoctorSchemaProps {
 const doctorSchema: yup.ObjectSchema<DoctorSchemaProps> = yup
     .object({
         doctorName: yup.string().required("Please enter a doctor name"),
-        doctorEmail: yup.string().required("Please enter a doctor email").email("Please input a valid email").matches(/^[a-z].+@doctor.ac.uk$/i, { message: "Please enter a valid doctor email", excludeEmptyString: true, name: "Match doctor email" }),
+        doctorEmail: yup.string().required("Please enter a doctor email").email("Please input a valid email").matches(/^[a-z].+@doctor.ac.uk|@doctor.co.ac.uk$/i, { message: "Please enter a valid doctor email", excludeEmptyString: true, name: "Match doctor email" }),
         doctorSpeciality: yup.string().required("Please choose a doctor speciality"),
         doctorNumber:yup.string().required("please enter your number"),
     });
 
 export default function ManageDoctorForm({ isEdit, isAdd, doctorId }: DoctorFormStates) {
     const [success, setSuccess] = useState<successResponse | null>(null);
-    const token = useAppSelector((state) => state.token);
+    const token = useAppSelector((state) => state.authReducer.token);
     const [doctor, setDoctor] = useState<DoctorData>({
         doctorEmail: '',
         doctorName: '',
@@ -43,6 +49,8 @@ export default function ManageDoctorForm({ isEdit, isAdd, doctorId }: DoctorForm
         ratings:[],
         reviews:[],
     });
+    const {errorMessage, setErrorMessage} = useContext(messageContext);
+    const [open, setOpen] = useState<Boolean>(false);
     const {
         register,
         setValue,
@@ -98,20 +106,23 @@ export default function ManageDoctorForm({ isEdit, isAdd, doctorId }: DoctorForm
                     }
                 })
                 setSuccess(response);
-            } catch (err) {
+            } catch (err:any) {
+                setErrorMessage(err.response.data.message);
+                console.log(errorMessage);
+                setOpen(true);
                 console.log(err);
             }
         } else if (isEdit && doctorId) {
             //ToDo implement edit doctor feature
             try {
-                let updateDoctorResponse = await axios.patch(`/api/auth/admin/doctor/edit/${doctorId}`, data, {
+                let updateDoctorResponse = await axios.put(`/api/doctors/update/${doctorId}`, data, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
                 })
                 setSuccess(updateDoctorResponse);
                 console.log(success);
-            } catch (err) {
+            } catch (err:any) {
                 console.log(err);
             }
         }
@@ -121,8 +132,29 @@ export default function ManageDoctorForm({ isEdit, isAdd, doctorId }: DoctorForm
 
     return (
         <div className="container-fluid" id="ManageDoctorBox">
-            <form onSubmit={onSubmit} action={isEdit && (doctorId && doctorId > 0) ? `api/auth/admin/doctor/edit/${doctorId}` : 'api/auth/admin/doctor/create'} method="post" id="ManageDoctorForm">
+            <form onSubmit={onSubmit} action={isEdit && (doctorId && doctorId > 0) ? `api/doctors/update/${doctorId}` : 'api/doctors/create'} method="post" id="ManageDoctorForm">
                 {success && <p><strong className="text-success">{success.data.message}</strong></p>}
+                {errorMessage &&
+                    <Collapse in={open as boolean}>
+                        <Alert action={
+                            <IconButton
+                                aria-label='close'
+                                color='inherit'
+                                size='small'
+                                onClick={() => {
+                                    setOpen(false);
+                                    setErrorMessage(null);
+                                }}
+                            >
+                                <CloseIcon fontSize='inherit' />
+                            </IconButton>
+                        } sx={{ mb:2 }} variant='filled' icon={<CheckIcon fontSize="inherit"
+                        />} severity="danger">
+                           {errorMessage}
+                        </Alert>
+
+                    </Collapse>
+                }
                 {isAdd &&
                     <>
                         <h2><small>Add a Doctor</small></h2>

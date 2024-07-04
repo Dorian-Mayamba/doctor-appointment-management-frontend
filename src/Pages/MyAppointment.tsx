@@ -3,11 +3,11 @@ import { useNavigate, useParams } from "react-router";
 import { useAppDispatch, useAppSelector } from "../../src/app/hooks";
 import { RootState } from "../../src/app/store";
 import axios from "axios";
-import { unAuthenticate } from "../../src/features/authenticater/authSlice";
+import { unAuthenticate, initialState } from "../../src/features/authenticater/authSlice";
 
 export function MyAppointment(){
     const {patientId} = useParams();
-    const token = useAppSelector((state:RootState)=>state.token);
+    const token = useAppSelector((state:RootState)=>state.authReducer.token);
     const [appointments, setAppointments] = useState<any>([]);
     const dispatch = useAppDispatch();
     const navigate =useNavigate();
@@ -21,13 +21,7 @@ export function MyAppointment(){
                 })
                 setAppointments(data.data);
             }catch(err){
-                dispatch(unAuthenticate({
-                    isAuthenticated:false,
-                    name:'',
-                    roleType:'',
-                    token:'',
-                    userId:0
-                }))
+                dispatch(unAuthenticate(initialState))
                 navigate('/', {replace:true});
             }
         }

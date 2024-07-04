@@ -15,7 +15,7 @@ export default function Doctors() {
                 </div>
                 <div className="col-md-10">
                     <h2 className="text-center p-3"><small>Find a Doctor</small></h2>
-                    <Stack direction="row" spacing={{ md:8, xs:2, sm:3 }}>
+                    <Stack direction="row" p={3} spacing={{ md:8, xs:2, sm:3 }}>
                         <DoctorList isGrid={true} />
                     </Stack>
                 </div>

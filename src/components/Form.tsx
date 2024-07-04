@@ -1,4 +1,4 @@
-import { FormProps, RegisterType,LoginType, ErrorResponse, ResponseDataType, successResponse } from "../types/types"
+import { FormProps, RegisterType, LoginType, ErrorResponse, ResponseDataType, successResponse } from "../types/types"
 import '../styles/form.css';
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -9,7 +9,11 @@ import $ from 'jquery';
 import { useAppDispatch } from "../app/hooks";
 import { authenticate } from "../features/authenticater/authSlice";
 import { useNavigate } from "react-router";
-import Button from '@mui/material/Button';
+import { setProfile } from "../../src/features/profiles/profileSlice";
+import { useContext } from "react";
+import { messageContext } from "../../src/contexts/FlashMessageContex";
+import { Link } from "react-router-dom";
+import LoginForm from "./LoginForm";
 
 type FormDataType = RegisterType | LoginType;
 const registerSchema: yup.ObjectSchema<FormDataType> = yup
@@ -20,10 +24,10 @@ const registerSchema: yup.ObjectSchema<FormDataType> = yup
         password: yup.string().required("please enter your password"),
         passwordConfirm: yup.string().required("Please confirm your password").oneOf([yup.ref("password"), ''], "Passwords must match")
     });
-const loginSchema:yup.ObjectSchema<FormDataType> = yup
+const loginSchema: yup.ObjectSchema<FormDataType> = yup
     .object({
-        email:yup.string().required("please enter an email").email("please enter a valid email"),
-        password:yup.string().required("please enter your password")
+        email: yup.string().required("please enter an email").email("please enter a valid email"),
+        password: yup.string().required("please enter your password")
     });
 
 export default function Form(props: FormProps) {
@@ -39,31 +43,56 @@ export default function Form(props: FormProps) {
         resolver: yupResolver(props.isRegister ? registerSchema : loginSchema)
     });
     const [error, setError] = useState<ErrorResponse | null>(null);
-    const [success,setSuccess] = useState<successResponse | null>(null);
-    const encodeCredential = (username:string, password:string) =>{
+    const [success, setSuccess] = useState<successResponse | null>(null);
+    const encodeCredential = (username: string, password: string) => {
         return btoa(`${username}:${password}`);
     }
+    const { setMessage } = useContext(messageContext);
     const onSubmit = handleSubmit(async (data: FormDataType) => {
         try {
-            if(props.isRegister){
-                let responseData: any = await axios.post(props.url, data);
-                setSuccess(responseData);
-            }else{
-                const credentials = encodeCredential(data.email,data.password);
-                let responseData:ResponseDataType = await axios.post(props.url, null, {
-                    headers:{
-                        Authorization:`Basic ${credentials}`
+            if (props.isRegister) {
+                let responseData: ResponseDataType = await axios.post(props.url, data);
+                setMessage(responseData.data.message);
+                dispatch(authenticate({
+                    token: responseData.data.accessToken,
+                    name: responseData.data.currentUserName,
+                    userId:responseData.data.id,
+                    isAuthenticated:true,
+                    ...responseData.data
+                }))
+
+                dispatch(setProfile({
+                    username: responseData.data.currentUserName,
+                    email: responseData.data.email,
+                    number: responseData.data.number,
+                    profilePath: responseData.data.userProfile,
+                    profile: responseData.data.userProfile
+                }))
+                navigate('/', { replace: true });
+            } else {
+                const credentials = encodeCredential(data.email, data.password);
+                let responseData: ResponseDataType = await axios.post(props.url, null, {
+                    headers: {
+                        Authorization: `Basic ${credentials}`
                     }
                 });
                 dispatch(authenticate({
-                    name:responseData.data.currentUserName,
+                    token: responseData.data.accessToken,
+                    name: responseData.data.currentUserName,
                     userId:responseData.data.id,
                     isAuthenticated:true,
-                    token:responseData.data.accessToken,
-                    email:responseData.data.email,
-                    roleType:responseData.data.roleType
+                    ...responseData.data
                 }))
-                navigate('/', {replace:true})
+
+                dispatch(setProfile({
+                    username: responseData.data.currentUserName,
+                    email: responseData.data.email,
+                    number: responseData.data.number,
+                    profilePath: responseData.data.userProfile,
+                    profile: responseData.data.userProfile
+                }))
+
+                navigate('/', { replace: true })
             }
         } catch (err: any) {
             setError(err.response);
@@ -84,17 +113,17 @@ export default function Form(props: FormProps) {
                 }
             });
         }, 5000)
-        const successFadeOutTime = setTimeout(()=>{
-            $('.text-success').fadeOut('slow', function(){
-                if(success) setSuccess(null);
+        const successFadeOutTime = setTimeout(() => {
+            $('.text-success').fadeOut('slow', function () {
+                if (success) setSuccess(null);
             })
-        },5000)
+        }, 5000)
 
         return () => {
             clearTimeout(errorFadeOutTime);
             clearTimeout(successFadeOutTime);
         }
-    }, [error,success, errors.email, errors.name, errors.password, errors.number, errors.passwordConfirm])
+    }, [error, success, errors.email, errors.name, errors.password, errors.number, errors.passwordConfirm])
 
     return props.isRegister ? (
         <div className="container-fluid form-content">
@@ -102,10 +131,9 @@ export default function Form(props: FormProps) {
                 <div className="col-md-6">
                     <form action={props.url} method={props.method} onSubmit={onSubmit}>
                         {error && <p><strong className="text-danger">{error.data.message}</strong></p>}
-                        {success && <p><strong className="text-success">{success.data.message}</strong></p>}
                         <h2>Register here</h2>
                         <div className="form-group">
-                            <input {...register("name")} type="text" className="form-control" placeholder="enter your name" onChange={(e) => setValue("name" , e.target.value)} />
+                            <input {...register("name")} type="text" className="form-control" placeholder="enter your name" onChange={(e) => setValue("name", e.target.value)} />
                             {errors.name && <p><strong className="text-danger">{errors.name.message}</strong></p>}
                         </div>
                         <div className="form-group">
@@ -125,7 +153,10 @@ export default function Form(props: FormProps) {
                             {errors.passwordConfirm && <p><strong className="text-danger">{errors.passwordConfirm.message}</strong></p>}
                         </div>
                         <div className="form-group">
-                            <input type="submit" value="Submit" className="form-control btn btn-custom-primary" />
+                            <input type="submit" value="Register" className="form-control btn btn-custom-primary" />
+                        </div>
+                        <div className="form-group">
+                            <Link to='/sign-in'>Already have an Account?</Link>
                         </div>
                     </form>
                 </div>
@@ -137,8 +168,8 @@ export default function Form(props: FormProps) {
             <div className="row">
                 <div className="col-md-6">
                     <form action={props.url} method={props.method} onSubmit={onSubmit}>
-                    {error?.data.message && <p><strong className="text-danger">{error.data.message}</strong></p>}
-                    <h1 className="mb-3"> <small>Sign in to your account</small></h1>
+                        {error?.data.message && <p><strong className="text-danger">{error.data.message}</strong></p>}
+                        <h1 className="mb-3"> <small>Sign in to your account</small></h1>
                         <div className="form-group">
                             <input type="text" {...register('email')} className="form-control" placeholder="enter your email" />
                             {errors.email && <p><strong className="text-danger">{errors.email.message}</strong></p>}
@@ -149,6 +180,9 @@ export default function Form(props: FormProps) {
                         </div>
                         <div className="form-group">
                             <input type="submit" value="Login" className="btn btn-custom-primary form-control" />
+                        </div>
+                        <div className="form-group">
+                            <Link to='/sign-up'>Haven't Got an account?</Link>
                         </div>
                     </form>
                 </div>

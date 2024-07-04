@@ -9,12 +9,13 @@ import { useAppDispatch } from '../app/hooks.js';
 import { unAuthenticate } from '../features/authenticater/authSlice.js';
 import { useNavigate } from 'react-router-dom';
 import { ADMIN, DOCTOR, PATIENT } from '../constants/constants.js';
+import { unSetProfile } from '../../src/features/profiles/profileSlice.js';
 
 export default function Navbar() {
-    const userId: number = useAppSelector((state: RootState) => state.userId);
-    const userName: string = useAppSelector((state: RootState) => state.name);
-    const isAuthenticated: Boolean = useAppSelector((state: RootState) => state.isAuthenticated);
-    const roleType: string = useAppSelector((state: RootState) => state.roleType);
+    const userId: number = useAppSelector((state: RootState) => state.authReducer.userId);
+    const userName: string = useAppSelector((state: RootState) => state.profileReducer.username);
+    const isAuthenticated: Boolean = useAppSelector((state: RootState) => state.authReducer.isAuthenticated);
+    const roleType: string = useAppSelector((state: RootState) => state.authReducer.roleType);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const handleLogout = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -24,14 +25,22 @@ export default function Navbar() {
             isAuthenticated: false,
             name: '',
             userId: 0,
-            email:'',
-            roleType: ''
+            email: '',
+            roleType: '',
+            userProfile: ''
+        }))
+        dispatch(unSetProfile({
+            username: '',
+            email: '',
+            number: '',
+            profile: '',
+            profilePath: ''
         }))
         navigate('/', { replace: true });
     }
     const authNavbar = () => {
         return (
-            <ul className="navbar-nav me-auto">
+            <ul className="navbar-nav ms-auto">
                 <li className="nav-item">
                     <NavLink to='/' className='nav-link'>
                         Home
@@ -63,11 +72,6 @@ export default function Navbar() {
                         </>
                         }
                         {roleType === PATIENT && <>
-                            <li>
-                                <Link to='#' className='dropdown-item'>
-                                    My appointment history
-                                </Link>
-                            </li>
                             <li className="dropdown-divider">
                             </li>
                             <li>
@@ -75,11 +79,7 @@ export default function Navbar() {
                             </li>
                         </>}
                         {roleType === DOCTOR && <>
-                            <li>
-                                <Link to='#' className="dropdown-item">
-                                    Manage my appointment
-                                </Link>
-                            </li>
+
                             <li className="dropdown-divider"></li>
                             <li>
                                 <Link className='dropdown-item' to={`/profile/${userId}`}>Profile</Link>
@@ -110,7 +110,7 @@ export default function Navbar() {
     const guestNavbar = () => {
         return (
             <>
-                <ul className="navbar-nav me-auto">
+                <ul className="navbar-nav ms-auto">
                     <li className="nav-item">
                         <NavLink to='/' className='nav-link'>
                             Home
@@ -155,12 +155,18 @@ export default function Navbar() {
     }
 
     return (
-        <nav className='navbar navbar-expand-sm bg-light navbar-light'>
+        <nav className='navbar navbar-expand-lg bg-light navbar-light'>
             <div className='container-fluid'>
+                <ul className="navbar-nav me-auto">
+                    <li className="nav-item">
+                        <Link to='/' className="navbar-brand">
+                            <img src={Image} alt="logo" />
+                            <span>MEDCONNECT</span>
+                        </Link>
+                    </li>
+                </ul>
                 {/* Links */}
-                <Link to='/' className="navbar-brand">
-                    <img src={Image} alt="logo" />
-                </Link>
+
                 <button className="navbar-toggler" type='button'
                     data-bs-toggle='collapse' data-bs-target='#collapsibleNavbar'>
                     <span className="navbar-toggler-icon"></span>

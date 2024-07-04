@@ -32,7 +32,7 @@ export default function AppointmentBooking() {
     const [endDayHour] = useState<number>(21);
     const [currentDate, setCurrentDate] = useState<Date>(new Date());
     const {appointments, setAppointments} = useContext(appointmentsContext);
-    const token = useAppSelector((state:RootState)=>state.token);
+    const token = useAppSelector((state:RootState)=>state.authReducer.token);
     Modal.setAppElement('#root');
     let getDoctor = async (): Promise<void> => {
         try {
@@ -41,7 +41,7 @@ export default function AppointmentBooking() {
                     Authorization: `Bearer ${token}`
                 }
             });
-            setDoctor(data.data);
+            setDoctor(await data.data);
             setAppointments(data.data.appointments.map(({ title, date, endTime, startTime }: CustomAppointmentModel) => {
                 return {
                     title: title,

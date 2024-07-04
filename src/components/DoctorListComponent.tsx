@@ -11,6 +11,7 @@ import '../styles/dialog.css';
 import { RootState } from "../../src/app/store";
 import { connect } from "react-redux";
 import DoctorCard from "./DoctorCardComponent";
+import { setDoctor, setDoctors } from "../../src/features/doctor/doctorSlice";
 
 interface DoctorListProps {
     token?: string;
@@ -23,7 +24,7 @@ interface UserDetailsProps {
     userId?: number;
 }
 
-class DoctorList extends React.Component<DoctorListProps & UserDetailsProps> {
+class DoctorList extends React.Component<DoctorListProps & UserDetailsProps & any> {
     customStyles: any;
     contentLabel: string;
     url: string;
@@ -34,14 +35,16 @@ class DoctorList extends React.Component<DoctorListProps & UserDetailsProps> {
     }
 
     state: Readonly<DoctorsResponse & any> = {
-        data: [],
+        doctors: [],
         isOpen: false,
     }
 
     displayDoctors = async () => {
         try {
             const response: DoctorsResponse = await axios.get('api/doctors');
-            this.setState({ data: response.data });
+            this.props.setDoctors({doctors:response.data});
+            console.log(this.props.doctors);
+            this.setState({ doctors: response.data });
         } catch (err) {
             console.log(err);
         }
@@ -66,7 +69,7 @@ class DoctorList extends React.Component<DoctorListProps & UserDetailsProps> {
 
     componentWillUnmount(): void {
         this.setState({
-            data: [],
+            doctors: [],
             isOpen: false
         });
     }
@@ -107,7 +110,7 @@ class DoctorList extends React.Component<DoctorListProps & UserDetailsProps> {
     }
 
     renderDoctorTable = () => {
-        let doctorElements = this.state.data.map(({
+        let doctorElements = this.state.doctors.map(({
             doctorName,
             doctorEmail,
             doctorId: docId,
@@ -120,7 +123,7 @@ class DoctorList extends React.Component<DoctorListProps & UserDetailsProps> {
                     <td>{doctorSpeciality}</td>
                     <td><Link to={`/doctor/${docId}`}><img src={InfoIcon} alt="Info" /></Link></td>
                     <td><Link to={`/doctor/edit/${docId}`}><img src={Pencil} alt="Edit" /></Link></td>
-                    <td><Link onClick={(e => this.openModal(`Delete Doctor ${doctorName}?`, e))} data-url={`/api/auth/admin/doctor/delete/${docId}`} to={`#`}><img src={DeleteIcon} alt="Delete" /></Link></td>
+                    <td><Link onClick={(e => this.openModal(`Delete Doctor ${doctorName}?`, e))} data-url={`/api/doctors/delete/${docId}`} to={`#`}><img src={DeleteIcon} alt="Delete" /></Link></td>
                 </tr>
             )
         })
@@ -128,12 +131,16 @@ class DoctorList extends React.Component<DoctorListProps & UserDetailsProps> {
     }
 
     renderDoctorColumns = () => {
-        console.log(this.state.data);
-        let doctorElements = this.state.data.map(({
+        console.log(this.state.doctors);
+        let doctorElements = this.props.doctors.map(({
             doctorName,
             doctorId,
             doctorSpeciality,
-            doctorProfile
+            doctorProfile,
+            reviews,
+            appointments,
+            ratings,
+            averageRating
         }: DoctorData, index: number) => {
             return (
                 <DoctorCard
@@ -141,6 +148,10 @@ class DoctorList extends React.Component<DoctorListProps & UserDetailsProps> {
                     doctorName={doctorName}
                     doctorSpeciality={doctorSpeciality}
                     profilePath={doctorProfile}
+                    reviews={reviews}
+                    ratings={ratings}
+                    appointments={appointments}
+                    averageRating={averageRating}
                     key={index}
                     isGrid={true}
                 />
@@ -192,9 +203,15 @@ class DoctorList extends React.Component<DoctorListProps & UserDetailsProps> {
 
 const mapStateToProps = (state: RootState) => {
     return {
-        userId: state.userId,
-        isAuthenticated: state.isAuthenticated
+        userId: state.authReducer.userId,
+        isAuthenticated: state.authReducer.isAuthenticated,
+        doctors: state.doctorsReducers.doctors
     }
 };
 
-export default connect(mapStateToProps)(DoctorList);
+const mapDispatchToProps = (dispatch: any) => ({
+    setDoctor: (doctor: any) => dispatch(setDoctor(doctor)),
+    setDoctors: (doctors: any) => dispatch(setDoctors(doctors))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(DoctorList);

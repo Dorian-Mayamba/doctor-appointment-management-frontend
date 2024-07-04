@@ -28,8 +28,11 @@
     color: #ffffff;
 }
 
+
+
 .container-fluid > .row > .col-md-6 > img{
     height: 50vh;
+    float: right;
 }
 
 .container-fluid > .row > .col-md-3 > button{
