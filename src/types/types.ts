@@ -61,6 +61,13 @@ export type DoctorData = {
     ratings:number;
     reviews:ReviewData[];
     averageRating:number;
+    slots:SlotData[];
+}
+
+export type SlotData = {
+    date:string;
+    time:string;
+    isBooked:boolean;
 }
 
 export type PatientsResponse = {

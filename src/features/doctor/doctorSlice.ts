@@ -21,6 +21,7 @@ const initialDoctorState: DoctorState = {
   ratings: 0,
   reviews:[],
   averageRating: 0,
+  slots:[]
 };
 
 // Initial state for a list of doctors
